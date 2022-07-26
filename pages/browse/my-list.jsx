@@ -27,6 +27,8 @@ const MyList = ({myListVideos}) => {
             title='My List'
             movies={myListVideos}
             size='small'
+            shouldWrap
+            shouldScale={false}
           />
         </div>
       </main>

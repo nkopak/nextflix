@@ -11,11 +11,8 @@ export default async function stats(req, res){
       const inputParams = req.method === 'POST' ? req.body : req.query;
       const {videoId} = inputParams;
       if (videoId){
-        // const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-        // const userId = decodedToken.issuer;
-        const userId = verifyToken(token);
+        const userId = await verifyToken(token);
         const findVideo = await findVideoIdByUser( videoId, userId, token);
-        // console.log({findVideo});
         const doesStatsExist = findVideo?.length > 0;
 
         if (req.method === 'POST'){

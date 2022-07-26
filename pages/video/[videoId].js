@@ -45,8 +45,6 @@ const Video = ({video}) => {
     statistics: {viewCount} = {viewCount: 0}
   } = video;
 
-  // console.log({video});
-
   const [toggleLike, setToggleLike] = useState(false);
   const [toggleDislike, setToggleDislike] = useState(false);
 

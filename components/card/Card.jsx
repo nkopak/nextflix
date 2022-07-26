@@ -7,7 +7,7 @@ import styles from './Card.module.css';
 
 const defaultImg = 'https://images.pexels.com/photos/1200450/pexels-photo-1200450.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1';
 
-export const Card = ({size = 'medium', imgUrl = defaultImg, id}) => {
+export const Card = ({size = 'medium', imgUrl = defaultImg, id, shouldScale = true}) => {
 
   const [imgSrc, setImgSrc] = useState(imgUrl);
 
@@ -22,6 +22,7 @@ export const Card = ({size = 'medium', imgUrl = defaultImg, id}) => {
   };
 
   const scale = id === 0 ? { scaleY: 1.1} : {scale: 1.1};
+  const shouldHover = shouldScale && {whileHover: {...scale}};
 
   return (
     <div
@@ -29,7 +30,7 @@ export const Card = ({size = 'medium', imgUrl = defaultImg, id}) => {
     >
       <motion.div
         className={cls(styles.imgMotionWrapper,classMap[size])}
-        whileHover={{...scale}}
+        {...shouldHover}
       >
         <Image
           className={styles.cardImg}

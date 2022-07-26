@@ -10,6 +10,7 @@ export const Navbar = () => {
 
   const [showDropdown, setShowDropdown] = useState();
   const [username, setUsername] = useState();
+  const [didToken, setDidToken] = useState();
 
   const router = useRouter();
 
@@ -17,7 +18,11 @@ export const Navbar = () => {
     async function getEmail(){
       try {
         const {email} = await magic.user.getMetadata();
-        setUsername(email);
+        const didToken = await magic.user.getIdToken();
+        if (email){
+          setUsername(email);
+          setDidToken(didToken);
+        }
       } catch (error) {
         console.error(`Error retrieving email ${error}`);
       }
@@ -44,8 +49,14 @@ export const Navbar = () => {
   const handleSignOut = async (e) => {
     e.preventDefault();
     try {
-      await magic.user.logout();
-      router.push('/login');
+      const response = await fetch('api/logout',{
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${didToken}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      await response.json();
     } catch (error) {
       console.error(`Error signing out ${error}`);
       router.push('/login');

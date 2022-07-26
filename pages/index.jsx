@@ -9,15 +9,15 @@ import styles from '../styles/Home.module.css';
 export async function getServerSideProps(context) {
   const {userId, token} = await useRedirectUser(context);
 
-  if (!userId){
-    return {
-      props:{},
-      redirect: {
-        destination: '/login',
-        permanent: false
-      }
-    };
-  }
+  // if (!userId){
+  //   return {
+  //     props:{},
+  //     redirect: {
+  //       destination: '/login',
+  //       permanent: false
+  //     }
+  //   };
+  // }
 
   const watchItAgainVideos = await getWatchItAgainVideos(userId, token);
   const disneyMovies = await getMovies('disney trailer');
