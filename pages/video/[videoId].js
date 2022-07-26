@@ -4,8 +4,9 @@ import cls from 'classnames';
 
 import { getYoutubeVideoById } from '../../lib/movies';
 
+import { DisLike, Like, Navbar } from '../../components';
 import styles from '../../styles/Video.module.css';
-import { Navbar } from '../../components';
+import { useEffect, useState } from 'react';
 
 Modal.setAppElement('#__next');
 
@@ -35,6 +36,7 @@ export function getStaticPaths(){
 const Video = ({video}) => {
 
   const router = useRouter();
+  const {videoId} = router.query;
 
   const {title,
     publishTime,
@@ -42,6 +44,61 @@ const Video = ({video}) => {
     channelTitle,
     statistics: {viewCount} = {viewCount: 0}
   } = video;
+
+  // console.log({video});
+
+  const [toggleLike, setToggleLike] = useState(false);
+  const [toggleDislike, setToggleDislike] = useState(false);
+
+  useEffect(()=> {
+    const fetchFunc = async () => {
+      const response = await fetch(`/api/stats?videoId=${videoId}`, {
+        method: 'GET'
+      });
+
+      const data = await response.json();
+
+      if (data.length > 0){
+        const favourited = data[0].favourited;
+        if (favourited === 1){
+          setToggleLike(true);
+        } else if (favourited === 0) {
+          setToggleDislike(true);
+        }
+      }
+    };
+    fetchFunc();
+
+  },[videoId]);
+
+  const runRatingService = async (favourited) => {
+    await fetch('/api/stats', {
+      method: 'POST',
+      body: JSON.stringify({
+        videoId, favourited
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+  };
+
+  const handleToggleLike = async () => {
+    const value = !toggleLike;
+    setToggleLike(value);
+    setToggleDislike(toggleLike);
+
+    await runRatingService(value ? 1 : 0);
+  };
+
+  const handleToggleDislike = async () => {
+    const value = !toggleDislike;
+
+    setToggleDislike(value);
+    setToggleLike(toggleDislike);
+
+    await runRatingService(value ? 0 : 1);
+  };
 
   return (
     <div className={styles.container}>
@@ -59,9 +116,21 @@ const Video = ({video}) => {
           type="text/html"
           width="100%"
           height="360"
-          src={`http://www.youtube.com/embed/${router.query.videoId}?enablejsapi=1&origin=http://example.com&controls=0&rel=0`}
+          src={`http://www.youtube.com/embed/${videoId}?enablejsapi=1&origin=http://example.com&controls=0&rel=0`}
           frameBorder="0"
-        ></iframe>
+        />
+        <div className={styles.likeDislikeBtnWrapper}>
+          <button onClick={handleToggleLike}>
+            <div className={styles.btnWrapper}>
+              <Like selected={toggleLike}/>
+            </div>
+          </button>
+          <button onClick={handleToggleDislike}>
+            <div className={styles.btnWrapper}>
+              <DisLike selected={toggleDislike}/>
+            </div>
+          </button>
+        </div>
 
         <div className={styles.modalBody}>
           <div className={styles.modalBodyContent}>

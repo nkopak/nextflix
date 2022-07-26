@@ -89,6 +89,7 @@ module.exports = {
     radix: 'warn',
     'require-atomic-updates': 'off',
     'require-await': 'warn',
+    'react-hooks/rules-of-hooks': 'off',
     semi: ['warn', 'always'],
     'sort-imports': [
       'warn',
